@@ -23,8 +23,11 @@ struct Account {
 fn establish_connection() -> PgConnection {
     let database_url = env::var("DATABASE_URL")
         .unwrap_or("postgresql://root@localhost:26257/defaultdb?sslmode=disable".to_string());
-    PgConnection::establish(&database_url)
-        .unwrap_or_else(|_| panic!("Error connecting to {}", database_url))
+    match PgConnection::establish(&database_url)
+    {
+        Ok(connection) => {connection}
+        Err(e) => {panic!("{:?}", e)}
+    }
 }
 
 fn get_account_balance(connection: &mut PgConnection, account_id: Uuid) -> QueryResult<i64> {
@@ -32,6 +35,10 @@ fn get_account_balance(connection: &mut PgConnection, account_id: Uuid) -> Query
         .find(account_id)
         .select(balance)
         .first(connection)
+}
+
+fn get_uuids(connection: &mut PgConnection) -> QueryResult<Vec<Uuid>>{
+    accounts_tom.select(id).limit(1_000_000).load(connection)
 }
 
 fn transfer_funds(
@@ -60,9 +67,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut connection = establish_connection();
 
     // Example usage
-    let account_id: Uuid = Uuid::parse_str("Your UUID here")?;
-    let balance_value = get_account_balance(&mut connection, account_id)?;
-    println!("Account balance: {:?}", balance_value);
-
+    let account_ids = get_uuids(&mut connection)?;
+    for local_id in account_ids {
+        let balance_value = get_account_balance(&mut connection, local_id)?;
+        println!("Account {} has balance {:?}", local_id, balance_value);
+    }
     Ok(())
 }
