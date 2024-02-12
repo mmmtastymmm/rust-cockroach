@@ -1,9 +1,9 @@
 #[macro_use]
 extern crate diesel;
-use diesel::prelude::*;
 use diesel::pg::PgConnection;
-use uuid::Uuid;
+use diesel::prelude::*;
 use std::env;
+use uuid::Uuid;
 
 use self::accounts_tom::dsl::*;
 
@@ -22,9 +22,9 @@ struct Account {
 
 fn establish_connection() -> PgConnection {
     let database_url = env::var("DATABASE_URL")
-        .expect("DATABASE_URL must be set");
+        .unwrap_or("postgresql://root@localhost:26257/defaultdb?sslmode=disable".to_string());
     PgConnection::establish(&database_url)
-        .expect(&format!("Error connecting to {}", database_url))
+        .unwrap_or_else(|_| panic!("Error connecting to {}", database_url))
 }
 
 fn get_account_balance(connection: &mut PgConnection, account_id: Uuid) -> QueryResult<i64> {
@@ -32,6 +32,28 @@ fn get_account_balance(connection: &mut PgConnection, account_id: Uuid) -> Query
         .find(account_id)
         .select(balance)
         .first(connection)
+}
+
+fn transfer_funds(
+    connection: &mut PgConnection,
+    from: Uuid,
+    to: Uuid,
+    amount: i64,
+) -> QueryResult<()> {
+    connection.transaction(|conn| {
+        let from_balance: i64 = accounts_tom.find(from).select(balance).first(conn)?;
+        assert!(from_balance >= amount, "Insufficient funds");
+
+        diesel::update(accounts_tom.find(from))
+            .set(balance.eq(balance - amount))
+            .execute(conn)?;
+
+        diesel::update(accounts_tom.find(to))
+            .set(balance.eq(balance + amount))
+            .execute(conn)?;
+
+        Ok(())
+    })
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
