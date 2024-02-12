@@ -1,0 +1,73 @@
+version: '3.7'
+
+services:
+  cassandra-node1:
+    image: cassandra:latest
+    container_name: cassandra-node1
+    environment:
+      - CASSANDRA_CLUSTER_NAME=TestCluster
+      - CASSANDRA_SEEDS=cassandra-node1,cassandra-node2,cassandra-node3
+    ports:
+      - "9042:9042" # Exposing the CQL port for external access
+    networks:
+      - cassandra-net
+
+  cassandra-node2:
+    image: cassandra:latest
+    container_name: cassandra-node2
+    environment:
+      - CASSANDRA_CLUSTER_NAME=TestCluster
+      - CASSANDRA_SEEDS=cassandra-node1,cassandra-node2,cassandra-node3
+    depends_on:
+      - cassandra-node1
+    networks:
+      - cassandra-net
+
+  cassandra-node3:
+    image: cassandra:latest
+    container_name: cassandra-node3
+    environment:
+      - CASSANDRA_CLUSTER_NAME=TestCluster
+      - CASSANDRA_SEEDS=cassandra-node1,cassandra-node2,cassandra-node3
+    depends_on:
+      - cassandra-node1
+    networks:
+      - cassandra-net
+
+  cassandra-node4:
+    image: cassandra:latest
+    container_name: cassandra-node4
+    environment:
+      - CASSANDRA_CLUSTER_NAME=TestCluster
+      - CASSANDRA_SEEDS=cassandra-node1,cassandra-node2,cassandra-node3
+    depends_on:
+      - cassandra-node1
+    networks:
+      - cassandra-net
+
+  cassandra-node5:
+    image: cassandra:latest
+    container_name: cassandra-node5
+    environment:
+      - CASSANDRA_CLUSTER_NAME=TestCluster
+      - CASSANDRA_SEEDS=cassandra-node1,cassandra-node2,cassandra-node3
+    depends_on:
+      - cassandra-node1
+    networks:
+      - cassandra-net
+
+  cqlsh:
+    image: nuvo/docker-cqlsh
+    container_name: cqlsh
+    depends_on:
+      - cassandra-node1
+    entrypoint: ["tail", "-f", "/dev/null"]
+    networks:
+      - cassandra-net
+    environment:
+      CQLSH_HOST: "cassandra-node1"
+      CQLVERSION: "3.4.6"
+
+networks:
+  cassandra-net:
+    driver: bridge

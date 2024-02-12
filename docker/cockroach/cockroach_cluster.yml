@@ -1,0 +1,65 @@
+version: '3.7'
+
+services:
+  cockroachdb-node1:
+    image: cockroachdb/cockroach:latest
+    container_name: cockroachdb-node1
+    command: start --insecure --advertise-addr=cockroachdb-node1 --join=cockroachdb-node1,cockroachdb-node2,cockroachdb-node3,cockroachdb-node4,cockroachdb-node5
+    ports:
+      - "26257:26257" # CockroachDB default port for the first node
+      - "8080:8080"   # Admin UI for the first node
+    networks:
+      - cockroachdb-net
+
+  cockroachdb-node2:
+    image: cockroachdb/cockroach:latest
+    container_name: cockroachdb-node2
+    command: start --insecure --advertise-addr=cockroachdb-node2 --join=cockroachdb-node1,cockroachdb-node2,cockroachdb-node3,cockroachdb-node4,cockroachdb-node5
+    networks:
+      - cockroachdb-net
+
+  cockroachdb-node3:
+    image: cockroachdb/cockroach:latest
+    container_name: cockroachdb-node3
+    command: start --insecure --advertise-addr=cockroachdb-node3 --join=cockroachdb-node1,cockroachdb-node2,cockroachdb-node3,cockroachdb-node4,cockroachdb-node5
+    networks:
+      - cockroachdb-net
+
+  cockroachdb-node4:
+    image: cockroachdb/cockroach:latest
+    container_name: cockroachdb-node4
+    command: start --insecure --advertise-addr=cockroachdb-node4 --join=cockroachdb-node1,cockroachdb-node2,cockroachdb-node3,cockroachdb-node4,cockroachdb-node5
+    networks:
+      - cockroachdb-net
+
+  cockroachdb-node5:
+    image: cockroachdb/cockroach:latest
+    container_name: cockroachdb-node5
+    command: start --insecure --advertise-addr=cockroachdb-node5 --join=cockroachdb-node1,cockroachdb-node2,cockroachdb-node3,cockroachdb-node4,cockroachdb-node5
+    networks:
+      - cockroachdb-net
+
+  cockroachdb-sql:
+    image: cockroachdb/cockroach:latest
+    container_name: cockroachdb-sql
+    depends_on:
+      - cockroachdb-node1
+#    command: sql --insecure --host=cockroachdb-node1
+    entrypoint: ["tail", "-f", "/dev/null"]
+    networks:
+      - cockroachdb-net
+    environment:
+      COCKROACH_HOST: "cockroachdb-node1"
+
+  cockroachdb-init:
+    image: cockroachdb/cockroach:latest
+    container_name: cockroachdb-init
+    depends_on:
+      - cockroachdb-node1
+    command: [ "init", "--insecure", "--host=cockroachdb-node1:26257" ]
+    networks:
+      - cockroachdb-net
+
+networks:
+  cockroachdb-net:
+    driver: bridge
