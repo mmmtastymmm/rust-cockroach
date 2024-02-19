@@ -33,7 +33,7 @@ struct NewAccount {
     balance: i64,
 }
 
-const SIZE_OF_DATA: i64 = 1_000_000;
+const SIZE_OF_DATA: i64 = 4_000_000;
 
 fn create_account(connection: &mut PgConnection, account: NewAccount) -> QueryResult<usize> {
     diesel::insert_into(accounts_example)
@@ -178,12 +178,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let account_ids = get_uuids(&mut connection)?;
     println!("Time to get account ids: {}", timer.elapsed());
-    let account_length = account_ids.len() as f64;
-    let total: f64 = account_ids.into_iter()
-        .map(|x| get_account_balance(&mut connection, x).unwrap_or(0) as f64)
-        .map(|x| x / account_length)
-        .sum();
-    println!("The average: {total}");
+    // let account_length = account_ids.len() as f64;
+    // let total: f64 = account_ids.into_iter()
+    //     .map(|x| get_account_balance(&mut connection, x).unwrap_or(0) as f64)
+    //     .map(|x| x / account_length)
+    //     .sum();
+    // println!("The average: {total}");
     println!("Timer to get average via for loop: {}", timer.elapsed());
     println!("The average: {}", get_all_account_balances(&mut connection));
     println!("Timer to get average via better query: {}", timer.elapsed());

@@ -6,7 +6,6 @@ services:
     container_name: cockroachdb-node1
     command: start --insecure --advertise-addr=cockroachdb-node1 --join=cockroachdb-node1,cockroachdb-node2,cockroachdb-node3,cockroachdb-node4,cockroachdb-node5
     ports:
-      - "26257:26257" # CockroachDB default port for the first node
       - "8080:8080"   # Admin UI for the first node
     networks:
       - cockroachdb-net
@@ -70,6 +69,25 @@ services:
     depends_on:
       - cockroachdb-node1
     command: [ "init", "--insecure", "--host=cockroachdb-node1:26257" ]
+    networks:
+      - cockroachdb-net
+
+  haproxy:
+    image: haproxy:latest
+    container_name: cockroachdb-haproxy
+    volumes:
+      - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+    ports:
+      - "26257:26257" # Expose the HAProxy port to the clients
+    depends_on:
+      - cockroachdb-node1
+      - cockroachdb-node2
+      - cockroachdb-node3
+      - cockroachdb-node4
+      - cockroachdb-node5
+      - cockroachdb-node6
+      - cockroachdb-node7
+    command: ["-f", "/usr/local/etc/haproxy/haproxy.cfg"]
     networks:
       - cockroachdb-net
 
