@@ -88,6 +88,7 @@ fn get_account_balance(connection: &mut PgConnection, account_id: Uuid) -> Query
 
 fn get_uuids(connection: &mut PgConnection) -> QueryResult<Vec<Uuid>> {
     accounts_example
+        .order_by(balance)
         .select(id)
         .limit(1_000_000)
         .load(connection)
