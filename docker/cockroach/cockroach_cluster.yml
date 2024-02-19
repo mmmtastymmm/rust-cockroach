@@ -39,6 +39,56 @@ services:
     networks:
       - cockroachdb-net
 
+  cockroachdb-node6:
+    image: cockroachdb/cockroach:latest
+    container_name: cockroachdb-node6
+    command: start --insecure --advertise-addr=cockroachdb-node5 --join=cockroachdb-node1,cockroachdb-node2,cockroachdb-node3,cockroachdb-node4,cockroachdb-node5
+    networks:
+      - cockroachdb-net
+  cockroachdb-node7:
+    image: cockroachdb/cockroach:latest
+    container_name: cockroachdb-node7
+    command: start --insecure --advertise-addr=cockroachdb-node5 --join=cockroachdb-node1,cockroachdb-node2,cockroachdb-node3,cockroachdb-node4,cockroachdb-node5
+    networks:
+      - cockroachdb-net
+  cockroachdb-node8:
+    image: cockroachdb/cockroach:latest
+    container_name: cockroachdb-node8
+    command: start --insecure --advertise-addr=cockroachdb-node5 --join=cockroachdb-node1,cockroachdb-node2,cockroachdb-node3,cockroachdb-node4,cockroachdb-node5
+    networks:
+      - cockroachdb-net
+  cockroachdb-node9:
+    image: cockroachdb/cockroach:latest
+    container_name: cockroachdb-node9
+    command: start --insecure --advertise-addr=cockroachdb-node5 --join=cockroachdb-node1,cockroachdb-node2,cockroachdb-node3,cockroachdb-node4,cockroachdb-node5
+    networks:
+      - cockroachdb-net
+  cockroachdb-node10:
+    image: cockroachdb/cockroach:latest
+    container_name: cockroachdb-node10
+    command: start --insecure --advertise-addr=cockroachdb-node5 --join=cockroachdb-node1,cockroachdb-node2,cockroachdb-node3,cockroachdb-node4,cockroachdb-node5
+    networks:
+      - cockroachdb-net
+  cockroachdb-node11:
+    image: cockroachdb/cockroach:latest
+    container_name: cockroachdb-node11
+    command: start --insecure --advertise-addr=cockroachdb-node5 --join=cockroachdb-node1,cockroachdb-node2,cockroachdb-node3,cockroachdb-node4,cockroachdb-node5
+    networks:
+      - cockroachdb-net
+  cockroachdb-node12:
+    image: cockroachdb/cockroach:latest
+    container_name: cockroachdb-node12
+    command: start --insecure --advertise-addr=cockroachdb-node5 --join=cockroachdb-node1,cockroachdb-node2,cockroachdb-node3,cockroachdb-node4,cockroachdb-node5
+    networks:
+      - cockroachdb-net
+  cockroachdb-node13:
+    image: cockroachdb/cockroach:latest
+    container_name: cockroachdb-node13
+    command: start --insecure --advertise-addr=cockroachdb-node5 --join=cockroachdb-node1,cockroachdb-node2,cockroachdb-node3,cockroachdb-node4,cockroachdb-node5
+    networks:
+      - cockroachdb-net
+
+
   cockroachdb-sql:
     image: cockroachdb/cockroach:latest
     container_name: cockroachdb-sql
