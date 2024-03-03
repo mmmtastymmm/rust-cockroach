@@ -1,13 +1,18 @@
 apiVersion: apps/v1
+# Stateful applications
 kind: StatefulSet
 metadata:
+  # Unique name for the stateful set
   name: minio
 spec:
+  # Which headless service the stateful set is associated with
   serviceName: "minio-headless"
+  # How many pods to maintain
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
       app: minio
+  # The pod template for pods in the stateful set
   template:
     metadata:
       labels:
@@ -15,7 +20,7 @@ spec:
     spec:
       containers:
         - name: minio
-          image: {{ .Values.minio.image }}
+          image: {{ .Values.minio.image }}:{{ .Values.minio.tag }}
           command:
             - /bin/sh
           args:
@@ -36,6 +41,7 @@ spec:
     - metadata:
         name: data
       spec:
+        # One pod needs read write
         accessModes: [ "ReadWriteOnce" ]
         resources:
           requests:

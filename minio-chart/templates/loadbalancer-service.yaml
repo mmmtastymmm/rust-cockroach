@@ -1,11 +1,18 @@
 apiVersion: v1
+# Using a k8s service
 kind: Service
 metadata:
+  # The name of the service within the kubernetes cluster
   name: minio-loadbalancer
+
 spec:
   type: {{ .Values.service.type }}
   ports:
+      # This is the port to expose outside the cluster
     - port: {{ .Values.service.port }}
+      # Needs to target the internal minio port, 9000 being the default
       targetPort: 9000
+  # Which pods to route traffic to
   selector:
+    # Any pod with label app that has a value of minio will be routed to
     app: minio
