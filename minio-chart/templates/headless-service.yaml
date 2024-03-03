@@ -1,0 +1,18 @@
+# Headless services are particularly useful for stateful applications or when you need a
+# stable network identity for each pod.
+apiVersion: v1
+kind: Service
+metadata:
+  # Name of the service
+  name: minio-headless
+spec:
+  # This specifies that the service is headless. Unlike typical services that get an IP address
+  # and load balance traffic, a headless service does not have a cluster IP.
+  # Pods are accessed directly.
+  clusterIP: None
+  # The port that the pods are listening on, using the default of 9000
+  ports:
+    - port: 9000
+  # The selector to identify which pods belong to this service.
+  selector:
+    app: minio

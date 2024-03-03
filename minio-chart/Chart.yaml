@@ -1,0 +1,9 @@
+apiVersion: v2
+name: minio
+description: A Helm chart for MinIO
+# This helm chart deploys an application
+type: application
+# The version of the helm chart following semantic versioning
+version: 0.1.0
+# the version of the minio that is being deployed
+appVersion: "RELEASE.2024-03-03T17-50-39Z.fips"

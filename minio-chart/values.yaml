@@ -1,0 +1,16 @@
+replicaCount: 10
+
+minio:
+  # Image and tag for the minio deployment
+  image: minio/minio
+  tag: RELEASE.2024-03-03T17-50-39Z.fips
+  # Values to change in production
+  accessKey: minioadmin
+  secretKey: minioadmin
+
+# this exposes the minio stateful set
+service:
+  # Uses a k8s provided load balancer
+  type: LoadBalancer
+  # Which port is exposed, so things outside the cluster will use 9000 for minio
+  port: 9000
