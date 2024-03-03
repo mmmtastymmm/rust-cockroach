@@ -1,0 +1,10 @@
+replicaCount: 4
+
+minio:
+  image: minio/minio:latest
+  accessKey: minioadmin
+  secretKey: minioadmin
+
+service:
+  type: LoadBalancer
+  port: 9000

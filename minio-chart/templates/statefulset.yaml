@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: minio
+spec:
+  serviceName: "minio-headless"
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: minio
+  template:
+    metadata:
+      labels:
+        app: minio
+    spec:
+      containers:
+        - name: minio
+          image: {{ .Values.minio.image }}
+          command:
+            - /bin/sh
+          args:
+            - "-c"
+            - >
+              minio server $(for i in $(seq 0 $(({{ .Values.replicaCount }} - 1))); do echo http://minio-$i.minio-headless.default.svc.cluster.local/data; done) --console-address ":9001"
+          env:
+            - name: MINIO_ROOT_USER
+              value: {{ .Values.minio.accessKey }}
+            - name: MINIO_ROOT_PASSWORD
+              value: {{ .Values.minio.secretKey }}
+          ports:
+            - containerPort: 9000
+          volumeMounts:
+            - name: data
+              mountPath: /data
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 10Gi
