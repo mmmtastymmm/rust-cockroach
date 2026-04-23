@@ -9,6 +9,6 @@ diesel = { version = "2.2.3", features = ["postgres", "128-column-tables", "extr
 openssl = "0.10.70"
 postgres = { version = "0.19.7", features = ["with-uuid-1"]}
 postgres-openssl = "0.5.0"
-rand = "0.8.5"
+rand = "0.8.6"
 uuid = {version = "1.1.2", features = ["v4"]}
 
